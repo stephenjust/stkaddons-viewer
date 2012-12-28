@@ -74,112 +74,13 @@ public class AssetXML {
             			num_records++;
             		}
             		Log.i("AssetXML.parse", "Parsed " + num_records + " records");
+        		} else if (eventType == XmlPullParser.START_TAG && xpp.getName().equalsIgnoreCase("music")) {
+            		while (this.parseMusic()) {} // Loop through music records
         		}
         		eventType = xpp.next();
         	}
         	
         	return;
-        	
-//        	Addon addon = new Addon(context);
-//        	String addonId;
-//        	String addonName;
-//        	String addonDescription;
-//        	int addonStatus;
-//        	int addonRevision;
-//        	String addonRemotePath;
-//        	String addonImage;
-//        	String addonIcon;
-//        	String addonImageList;
-//        	float addonRating;
-//        	// Loop through the document
-//        	while (eventType != XmlPullParser.END_DOCUMENT) {
-//        		switch (eventType) {
-//	        		case XmlPullParser.START_TAG:
-//	        			if (xpp.getName().equalsIgnoreCase("assets")) {
-//	        				eventType = xpp.next();
-//	        				continue;
-//	        			} else if (!isAllowedTag(xpp.getName())) {
-//	        				Log.w("AssetXML.parse", "Unknown asset type: " + xpp.getName());
-//	                		eventType = xpp.next();
-//	        				continue;
-//	        			}
-//	                	addonId = null;
-//	                	addonName = null;
-//	                	addonStatus = -1;
-//	                	addonRevision = -1;
-//	                	addonDescription = null;
-//	                	addonRemotePath = null;
-//	                	addonImage = null;
-//	                	addonIcon = null;
-//	                	addonImageList = null;
-//	                	addonRating = 0f;
-//	        			// Loop through attributes
-//	        			for (int i = 0; i < xpp.getAttributeCount(); i++) {
-//	        				String attrib = xpp.getAttributeName(i);
-//	        				
-//	        				if (attrib.equalsIgnoreCase("id")) {
-//	        					addonId = xpp.getAttributeValue(i);
-//	        				} else if (attrib.equalsIgnoreCase("status")) {
-//	        					addonStatus = Integer.parseInt(xpp.getAttributeValue(i));
-//	        				} else if (attrib.equalsIgnoreCase("name")) {
-//	        					addonName = xpp.getAttributeValue(i);
-//	        				} else if (attrib.equalsIgnoreCase("revision")) {
-//	        					addonRevision = Integer.parseInt(xpp.getAttributeValue(i));
-//	        				} else if (attrib.equalsIgnoreCase("file")) {
-//	        					addonRemotePath = xpp.getAttributeValue(i);
-//	        				} else if (attrib.equalsIgnoreCase("image")) {
-//	        					addonImage = xpp.getAttributeValue(i);
-//	        				} else if (attrib.equalsIgnoreCase("description")) {
-//	        					addonDescription = xpp.getAttributeValue(i);
-//	        				} else if (attrib.equalsIgnoreCase("icon")) {
-//	        					addonIcon = xpp.getAttributeValue(i);
-//	        				} else if (attrib.equalsIgnoreCase("image-list")) {
-//	        					addonImageList = xpp.getAttributeValue(i);
-//	        				} else if (attrib.equalsIgnoreCase("rating")) {
-//	        					addonRating = Float.parseFloat(xpp.getAttributeValue(i));
-//	        				} else {
-//	        					Log.w("AssetXML.parser", "Unknown attribute: " + attrib);
-//	        				}
-//	        			}
-//	        			
-//	        			// Check if addon exists
-//	        			boolean createRecord = false;
-//	        			if (!addon.getAddonList().contains(addonId)) {
-//	        				Log.i("AddonXML.parse", "No record found for: " + addonId);
-//	        				createRecord = true;
-//	        			} else {
-//	        				addon.getAddon(addonId);
-//	        				if (addon.getRevision() < addonRevision) {
-//		        				Log.i("AddonXML.parse", "Update record for: " + addonId +
-//		        						" (Old: " + addon.getRevision() + "; New: " + addonRevision + ")");
-//		        				createRecord = true;
-//	        				}
-//	        			}
-//	        			if (createRecord) {
-//	        				boolean addSuccess = addon.add(addonId, xpp.getName(), addonName, addonRevision,
-//	        						addonDescription, addonRemotePath, addonImage, addonIcon, addonStatus, addonImageList);
-//	        				if (!addSuccess) {
-//	        					Log.e("AddonXML.parse", "Failed to add record for: " + addonId);
-//	        				}
-//	        			}
-//	        			break;
-//	        			
-//	        		case XmlPullParser.END_TAG:
-//	        			// Don't do anything
-//	        			break;
-//	        		case XmlPullParser.TEXT:
-//	        			// Don't do anything
-//	        			break;
-//	        		case XmlPullParser.DOCDECL:
-//	        			// Don't do anything
-//	        			break;
-//	        		
-//	        		default:
-//	        			Log.i("AddonXML.parse", "Unhandled XML event: " + eventType);
-//	        			break;
-//        		}
-//        		eventType = xpp.next();
-//        	}
     	}
     	finally {
     		if (stream != null) {
@@ -293,6 +194,69 @@ public class AssetXML {
         					Log.e("AssetXML.parseAddon", "Failed to add record for: " + addonId);
         				}
         			}
+					return true;
+				}
+				break;
+			// Quit at the end of the type section
+			case XmlPullParser.END_TAG:
+				if (isTypeTag(xpp.getName())) {
+					return false;
+				}
+				break;
+			}
+			
+			eventType = xpp.next();
+		}
+		return false;
+	}
+	
+	private boolean parseMusic() throws XmlPullParserException, IOException {
+		int eventType = xpp.next();
+		while (eventType != XmlPullParser.END_DOCUMENT) {
+			switch (eventType) {
+			case XmlPullParser.START_TAG:
+				if (xpp.getName().equalsIgnoreCase("addon")) {
+					// Get attributes for this addon
+					int id = 0;
+					String title = null;
+					String artist = null;
+					float gain = 1.0f;
+					String remoteFile = null;
+					String localFile = null;
+					for (int i = 0; i < xpp.getAttributeCount(); i++) {
+						String attrib = xpp.getAttributeName(i);
+						if (attrib.equalsIgnoreCase("id")) {
+							id = Integer.parseInt(xpp.getAttributeValue(i));
+						} else if (attrib.equalsIgnoreCase("title")) {
+							title = xpp.getAttributeValue(i);
+						} else if (attrib.equalsIgnoreCase("artist")) {
+							artist = xpp.getAttributeValue(i);
+						} else if (attrib.equalsIgnoreCase("gain")) {
+							gain = Float.parseFloat(xpp.getAttributeValue(i));
+						} else if (attrib.equalsIgnoreCase("file")) {
+							remoteFile = xpp.getAttributeValue(i);
+						}
+					}
+					
+					Music music = new Music(mContext);
+					Music.MusicTrack track = music.get(id);
+					boolean changed = false;
+					if (track == null) {
+						track = new Music.MusicTrack(id, title, artist, gain, remoteFile, localFile);
+						changed = true;
+					} else {
+						if (title != track.mTitle || artist != track.mArtist || gain != track.mGain || remoteFile != track.mRemoteFile) {
+							changed = true;
+							track.mTitle = title;
+							track.mArtist = artist;
+							track.mGain = gain;
+							track.mRemoteFile = remoteFile;
+						}
+					}
+					
+					if (changed) {
+						music.add(track);
+					}
 					return true;
 				}
 				break;
