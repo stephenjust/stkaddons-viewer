@@ -1,0 +1,70 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:padding="16dp" >
+
+   <LinearLayout
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/addon_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:text="Addon Title"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/addon_rating"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:maxLines="1"
+            android:text="Rating: 0/0" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/addon_designer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Designer: Unknown" />
+
+    <TextView
+        android:id="@+id/addon_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Descriptive Text" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="top|center_vertical|center_horizontal" >
+
+        <HorizontalScrollView
+            android:id="@+id/addon_image_gallery_cnt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <LinearLayout
+                android:id="@+id/addon_image_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical" >
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <ProgressBar
+            android:id="@+id/addon_image_gallery_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</LinearLayout>

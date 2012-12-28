@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="false"
+    android:orientation="vertical"
+    tools:context=".MenuActivity" >
+
+    <ImageView
+        android:id="@+id/main_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:clickable="false"
+        android:contentDescription="@string/stk_logo"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:longClickable="false"
+        android:paddingTop="15dp"
+        android:src="@drawable/stk_logo" />
+
+	<Button
+	    android:id="@+id/kart_button"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_gravity="center"
+	    android:layout_weight="1"
+	    android:focusable="false"
+	    android:focusableInTouchMode="false"
+	    android:hint="kart"
+	    android:longClickable="false"
+	    android:onClick="menuButton"
+	    android:text="@string/menu_karts"
+	    android:visibility="visible" />
+
+	<Button
+	    android:id="@+id/track_button"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_gravity="center"
+	    android:layout_weight="1"
+	    android:focusable="false"
+	    android:focusableInTouchMode="false"
+	    android:hint="track"
+	    android:longClickable="false"
+	    android:onClick="menuButton"
+	    android:text="@string/menu_tracks"
+	    android:visibility="visible" />
+
+	<Button
+	    android:id="@+id/arena_button"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_gravity="center"
+	    android:layout_weight="1"
+	    android:focusable="false"
+	    android:focusableInTouchMode="false"
+	    android:hint="arena"
+	    android:longClickable="false"
+	    android:onClick="menuButton"
+	    android:text="@string/menu_arenas"
+	    android:visibility="visible" />
+
+</LinearLayout>
