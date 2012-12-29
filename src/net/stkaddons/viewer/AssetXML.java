@@ -231,8 +231,6 @@ public class AssetXML {
 							title = xpp.getAttributeValue(i);
 						} else if (attrib.equalsIgnoreCase("artist")) {
 							artist = xpp.getAttributeValue(i);
-						} else if (attrib.equalsIgnoreCase("gain")) {
-							gain = Float.parseFloat(xpp.getAttributeValue(i));
 						} else if (attrib.equalsIgnoreCase("file")) {
 							remoteFile = xpp.getAttributeValue(i);
 						}
@@ -245,8 +243,18 @@ public class AssetXML {
 						track = new Music.MusicTrack(id, title, artist, gain, remoteFile, localFile);
 						changed = true;
 					} else {
-						if (title != track.mTitle || artist != track.mArtist || gain != track.mGain || remoteFile != track.mRemoteFile) {
+						if (!title.equals(track.mTitle) || !artist.equals(track.mArtist) || !remoteFile.equals(track.mRemoteFile)) {
 							changed = true;
+							// Removed changed file
+							if (!track.mRemoteFile.equals(remoteFile)) {
+								if (track.mLocalFile != null) {
+									File local = new File(track.mLocalFile);
+									if (local.exists()) local.delete();
+								}
+								track.mLocalFile = null;
+								Log.i("AssetXML.parseMusic", "Deleted old file for music track " + title);
+								Log.i("AssetXML.parseMusic", "Remote file changed from " + track.mRemoteFile + " to " + remoteFile);
+							}
 							track.mTitle = title;
 							track.mArtist = artist;
 							track.mGain = gain;
@@ -255,7 +263,9 @@ public class AssetXML {
 					}
 					
 					if (changed) {
-						music.add(track);
+						if (!music.add(track)) {
+							Log.e("AssetXML.parseMusic", "Failed to add music track " + title);
+						}
 					}
 					return true;
 				}

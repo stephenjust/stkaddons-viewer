@@ -1,5 +1,7 @@
 package net.stkaddons.viewer;
 
+import java.util.ArrayList;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -62,6 +64,33 @@ public class Music {
 		}
 	}
 	
+	public ArrayList<MusicTrack> getAll() {
+		SQLiteDatabase db = null;
+		try {
+			// Open database connection
+	    	SQLiteOpenHelper dbHelper = new Database(mContext);
+	    	db = dbHelper.getReadableDatabase();
+
+	    	// Query database
+	    	String[] columns = {"id"};
+	    	Cursor ref = db.query("music", columns, null, null, null, null, "title ASC");
+
+	    	// Save results
+	    	ArrayList<MusicTrack> result = new ArrayList<MusicTrack>();
+	    	if (ref.getCount() == 0) {
+	    		return result;
+	    	}
+	    	for (int i = 0; i < ref.getCount(); i++) {
+	    		ref.move(1);
+	    		result.add(this.get(ref.getInt(ref.getColumnIndex("id"))));
+	    	}
+	    	return result;
+		} finally {
+			if (db != null)
+				db.close();
+		}
+	}
+	
 	public boolean add(MusicTrack track) {
 		SQLiteDatabase db = null;
 		try {
@@ -76,17 +105,18 @@ public class Music {
 			values.put("artist", track.mArtist);
 			values.put("gain", track.mGain);
 			values.put("remoteFile", track.mRemoteFile);
-			values.put("localFile", track.mLocalFile);
 			
 			if (this.get(track.mId) == null) {
 				// Create new record
 				values.put("id", track.mId);
+				values.put("localFile", (String) null);
 				long newRow = db.insert("music", null, values);
 				if (newRow == -1)
 					return false;
 			} else {
 				// Update existing record
 				String[] whereArgs = {Integer.toString(track.mId)};
+				values.put("localFile", track.mLocalFile);
 				int rowsUpdated = db.update("music", values, "id = ?", whereArgs);
 				if (rowsUpdated == 0)
 					return false;

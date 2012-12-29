@@ -1,3 +1,4 @@
 <resources>
     <item type="layout" name="activity_addon_list">@layout/activity_addon_twopane</item>
+    <item type="layout" name="activity_music_list">@layout/activity_music_twopane</item>
 </resources>

@@ -6,10 +6,7 @@ import java.io.IOException;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -93,12 +90,18 @@ public class MainActivity extends Activity {
     }
     
     public void menuButton(View view) {
-    	Intent browser = new Intent(this, AddonListActivity.class);
     	Button clicked = (Button) findViewById(view.getId());
-    	browser.putExtra(SELECTED_MODE, clicked.getHint());
-    	startActivity(browser);
+    	CharSequence mode = clicked.getHint();
     	
-    	Log.i("MainActivity", "Clicked button: " + clicked.getHint());
+    	if (!mode.equals((CharSequence) "music")) {
+	    	Intent browser = new Intent(this, AddonListActivity.class);
+	    	browser.putExtra(SELECTED_MODE, mode);
+	    	startActivity(browser);
+    	} else {
+    		// Go to music browser
+    		Intent browser = new Intent(this, MusicListActivity.class);
+    		startActivity(browser);
+    	}
     }
     
     public void quitButton(View view) {

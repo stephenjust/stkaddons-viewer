@@ -7,6 +7,12 @@
     <string name="menu_loading_text">Loading&#8230;</string>
     <string name="dummy_text">Dummy text&#8230;</string>
 
+    <!-- Main menu -->
+    <string name="menu_tracks">Tracks</string>
+    <string name="menu_karts">Karts</string>
+    <string name="menu_arenas">Arenas</string>
+    <string name="menu_music">Music</string>
+    
     <!-- XML Files -->
     <string name="xml_news">http://stkaddons.net/dl/xml/news.xml</string>
     <string name="xml_assets">http://stkaddons.net/dl/xml/assets2.xml</string>
@@ -14,15 +20,16 @@
     <!-- Error Messages -->
     <string name="error_no_network">Please connect to a wi-fi network.</string>
     <string name="title_activity_menu">STK Addon Viewer</string>
-    <string name="menu_tracks">Tracks</string>
-    <string name="menu_karts">Karts</string>
-    <string name="menu_arenas">Arenas</string>
     <string name="stk_logo">SuperTuxKart Logo</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_model_view">View Model</string>
     <string name="title_addon_detail">Addon Detail</string>
     <string name="title_addon_list">Addons</string>
+    
+    <!-- Music view -->
+    <string name="title_music_detail">Music Track Detail</string>
+    <string name="title_music_list">Music Tracks</string>
     
     <!-- Credits activity -->
     <string name="title_activity_credits">Credits</string>

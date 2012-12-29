@@ -55,6 +55,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.stkaddons.viewer.MainActivity" />
         </activity>
+        <activity
+            android:name="net.stkaddons.viewer.MusicListActivity"
+            android:label="@string/title_music_list" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.stkaddons.viewer.MainActivity" />
+        </activity>
+        <activity
+            android:name="net.stkaddons.viewer.MusicDetailActivity"
+            android:label="@string/title_music_detail" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MusicListActivity" />
+        </activity>
     </application>
 
 </manifest>
