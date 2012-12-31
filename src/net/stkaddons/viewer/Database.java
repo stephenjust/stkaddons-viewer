@@ -46,9 +46,13 @@ public class Database extends SQLiteOpenHelper {
     				"id INT UNIQUE NOT NULL, " +
     				"title TEXT NOT NULL, " +
     				"artist TEXT NOT NULL, " +
+    				"license TEXT NOT NULL, " +
     				"gain FLOAT NOT NULL, " +
     				"remoteFile TEXT UNIQUE NOT NULL, " +
-    				"localFile TEXT UNIQUE" +
+    				"localFile TEXT UNIQUE, " +
+    				"fileSize INT NOT NULL, " +
+    				"trackLength INT NOT NULL, " +
+    				"xmlFile TEXT UNIQUE" +
     			");";
 	
 	public Database(Context context) {

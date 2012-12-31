@@ -13,6 +13,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class AssetXML {
@@ -211,74 +213,98 @@ public class AssetXML {
 	}
 	
 	private boolean parseMusic() throws XmlPullParserException, IOException {
-		int eventType = xpp.next();
-		while (eventType != XmlPullParser.END_DOCUMENT) {
-			switch (eventType) {
-			case XmlPullParser.START_TAG:
-				if (xpp.getName().equalsIgnoreCase("addon")) {
-					// Get attributes for this addon
-					int id = 0;
-					String title = null;
-					String artist = null;
-					float gain = 1.0f;
-					String remoteFile = null;
-					String localFile = null;
-					for (int i = 0; i < xpp.getAttributeCount(); i++) {
-						String attrib = xpp.getAttributeName(i);
-						if (attrib.equalsIgnoreCase("id")) {
-							id = Integer.parseInt(xpp.getAttributeValue(i));
-						} else if (attrib.equalsIgnoreCase("title")) {
-							title = xpp.getAttributeValue(i);
-						} else if (attrib.equalsIgnoreCase("artist")) {
-							artist = xpp.getAttributeValue(i);
-						} else if (attrib.equalsIgnoreCase("file")) {
-							remoteFile = xpp.getAttributeValue(i);
-						}
-					}
-					
-					Music music = new Music(mContext);
-					Music.MusicTrack track = music.get(id);
-					boolean changed = false;
-					if (track == null) {
-						track = new Music.MusicTrack(id, title, artist, gain, remoteFile, localFile);
-						changed = true;
-					} else {
-						if (!title.equals(track.mTitle) || !artist.equals(track.mArtist) || !remoteFile.equals(track.mRemoteFile)) {
-							changed = true;
-							// Removed changed file
-							if (!track.mRemoteFile.equals(remoteFile)) {
-								if (track.mLocalFile != null) {
-									File local = new File(track.mLocalFile);
-									if (local.exists()) local.delete();
-								}
-								track.mLocalFile = null;
-								Log.i("AssetXML.parseMusic", "Deleted old file for music track " + title);
-								Log.i("AssetXML.parseMusic", "Remote file changed from " + track.mRemoteFile + " to " + remoteFile);
-							}
-							track.mTitle = title;
-							track.mArtist = artist;
-							track.mGain = gain;
-							track.mRemoteFile = remoteFile;
-						}
-					}
-					
-					if (changed) {
-						if (!music.add(track)) {
-							Log.e("AssetXML.parseMusic", "Failed to add music track " + title);
-						}
-					}
-					return true;
-				}
-				break;
-			// Quit at the end of the type section
-			case XmlPullParser.END_TAG:
-				if (isTypeTag(xpp.getName())) {
-					return false;
-				}
-				break;
-			}
+		SQLiteDatabase db = null;
+		try {
+			// Open a writable database connection to reuse
+	    	SQLiteOpenHelper dbHelper = new Database(mContext);
+	    	db = dbHelper.getWritableDatabase();
 			
-			eventType = xpp.next();
+			int eventType = xpp.next();
+			while (eventType != XmlPullParser.END_DOCUMENT) {
+				switch (eventType) {
+				case XmlPullParser.START_TAG:
+					if (xpp.getName().equalsIgnoreCase("addon")) {
+						// Get attributes for this addon
+						int id = 0;
+						String title = null;
+						String artist = null;
+						float gain = 1.0f;
+						String license = null;
+						int size = 0;
+						int length = 0;
+						String remoteFile = null;
+						String localFile = null;
+						String xml = null;
+						for (int i = 0; i < xpp.getAttributeCount(); i++) {
+							String attrib = xpp.getAttributeName(i);
+							if (attrib.equalsIgnoreCase("id")) {
+								id = Integer.parseInt(xpp.getAttributeValue(i));
+							} else if (attrib.equalsIgnoreCase("title")) {
+								title = xpp.getAttributeValue(i);
+							} else if (attrib.equalsIgnoreCase("artist")) {
+								artist = xpp.getAttributeValue(i);
+							} else if (attrib.equalsIgnoreCase("file")) {
+								remoteFile = xpp.getAttributeValue(i);
+							} else if (attrib.equalsIgnoreCase("gain")) {
+								gain = Float.parseFloat(xpp.getAttributeValue(i));
+							} else if (attrib.equalsIgnoreCase("license")) {
+								license = xpp.getAttributeValue(i);
+							} else if (attrib.equalsIgnoreCase("xml-filename")) {
+								xml = xpp.getAttributeValue(i);
+							} else if (attrib.equalsIgnoreCase("size")) {
+								size = Integer.parseInt(xpp.getAttributeValue(i));
+							} else if (attrib.equalsIgnoreCase("length")) {
+								length = Integer.parseInt(xpp.getAttributeValue(i));
+							}
+						}
+						
+						Music music = new Music(mContext);
+						Music.MusicTrack track = music.get(id, db);
+						boolean changed = false;
+						if (track == null) {
+							track = new Music.MusicTrack(id, title, artist, gain, license, length, size, remoteFile, localFile, xml);
+							changed = true;
+						} else {
+							if (!title.equals(track.mTitle) || !artist.equals(track.mArtist) || !remoteFile.equals(track.mRemoteFile)) {
+								changed = true;
+								// Removed changed file
+								if (!track.mRemoteFile.equals(remoteFile)) {
+									if (track.mLocalFile != null) {
+										File local = new File(track.mLocalFile);
+										if (local.exists()) local.delete();
+									}
+									track.mLocalFile = null;
+									Log.i("AssetXML.parseMusic", "Deleted old file for music track " + title);
+									Log.i("AssetXML.parseMusic", "Remote file changed from " + track.mRemoteFile + " to " + remoteFile);
+								}
+								track.mTitle = title;
+								track.mArtist = artist;
+								track.mGain = gain;
+								track.mRemoteFile = remoteFile;
+							}
+						}
+						
+						if (changed) {
+							if (!music.add(track, db)) {
+								Log.e("AssetXML.parseMusic", "Failed to add music track " + title);
+							}
+						}
+						return true;
+					}
+					break;
+				// Quit at the end of the type section
+				case XmlPullParser.END_TAG:
+					if (isTypeTag(xpp.getName())) {
+						return false;
+					}
+					break;
+				}
+				
+				eventType = xpp.next();
+			}
+		} finally {
+			if (db != null)
+				db.close();
 		}
 		return false;
 	}

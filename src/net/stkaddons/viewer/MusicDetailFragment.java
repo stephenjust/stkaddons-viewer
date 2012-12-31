@@ -13,6 +13,7 @@ public class MusicDetailFragment extends Fragment {
 
     private Music mMusic;
     private Music.MusicTrack mTrack;
+    private MediaPlayerFragment mPlayerFragment;
     
     public MusicDetailFragment() {
     }
@@ -39,9 +40,18 @@ public class MusicDetailFragment extends Fragment {
         // Display basic addon info
         ((TextView) rootView.findViewById(R.id.music_title)).setText(mTrack.mTitle);
         ((TextView) rootView.findViewById(R.id.music_artist)).setText(mTrack.mArtist);
+        ((TextView) rootView.findViewById(R.id.music_license)).setText(mTrack.mLicense);
 
+        // Start player fragment
+        Bundle arguments = new Bundle();
+        arguments.putInt(MediaPlayerFragment.ARG_ITEM_ID, mTrack.mId);
+        mPlayerFragment = new MediaPlayerFragment();
+        mPlayerFragment.setArguments(arguments);
+        getChildFragmentManager().beginTransaction()
+                .add(R.id.fragment_player, mPlayerFragment)
+                .commit();
         
         return rootView;
     }
- 
 }
+

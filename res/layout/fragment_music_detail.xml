@@ -1,9 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal"
     android:orientation="vertical"
-    android:padding="16dp" >
+    android:padding="16dp"
+    android:showDividers="middle"
+    tools:context=".MusicDetailFragment" >
 
     <TextView
         android:id="@+id/music_title"
@@ -12,10 +16,27 @@
         android:text="@string/dummy_text"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/music_artist"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dummy_text" />
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/music_artist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dummy_text" />
+
+        <TextView
+            android:id="@+id/music_license"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dummy_text" />
+
+        <FrameLayout
+            android:id="@+id/fragment_player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </LinearLayout>
