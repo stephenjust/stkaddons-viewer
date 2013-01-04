@@ -32,9 +32,9 @@ public class StorageHelper {
 		
 		// Initialise storage directories
 		File extBaseDir = mContext.getExternalFilesDir(null);
-		File mMusicStorageDir = new File(extBaseDir.getAbsolutePath() + "/music");
-		File mTrackStorageDir = new File(extBaseDir.getAbsolutePath() + "/tracks");
-		File mKartStorageDir = new File(extBaseDir.getAbsolutePath() + "/karts");
+		mMusicStorageDir = new File(extBaseDir.getAbsolutePath() + "/music");
+		mTrackStorageDir = new File(extBaseDir.getAbsolutePath() + "/tracks");
+		mKartStorageDir = new File(extBaseDir.getAbsolutePath() + "/karts");
 		mMusicStorageDir.mkdirs();
 		mTrackStorageDir.mkdirs();
 		mKartStorageDir.mkdirs();

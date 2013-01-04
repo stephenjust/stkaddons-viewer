@@ -39,6 +39,8 @@ public class MediaPlayerFragment extends Fragment {
 	private boolean isPlaying;
 	private int mProgress;
 	private MediaPlayer mPlayer;
+	
+	private StreamAudioTask mStreamTask;
     
     public MediaPlayerFragment() {
     }
@@ -87,7 +89,8 @@ public class MediaPlayerFragment extends Fragment {
 			public void onClick(View view) {
 				if (!mIsReady) {
 					if (!mPreparing) {
-						new StreamAudioTask().execute(mTrack);
+						mStreamTask = new StreamAudioTask();
+						mStreamTask.execute(mTrack);
 						mPreparing = true;
 					}
 					return;
@@ -107,6 +110,10 @@ public class MediaPlayerFragment extends Fragment {
     
     public void onPause() {
     	super.onPause();
+    	
+    	if (mStreamTask != null) {
+    		mStreamTask.cancel(false);
+    	}
     	
     	if (mPlayer.isPlaying()) {
     		mPlayer.pause();
@@ -168,7 +175,7 @@ public class MediaPlayerFragment extends Fragment {
 		}
     }
     
-    class StreamAudioTask extends AsyncTask<Music.MusicTrack, String, String> {
+    class StreamAudioTask extends AsyncTask<Music.MusicTrack, Integer, String> {
 
 		@Override
 		protected String doInBackground(MusicTrack... track) {
@@ -177,18 +184,25 @@ public class MediaPlayerFragment extends Fragment {
 			if (track[0].mLocalFile != null) {
 				localFile = new File(track[0].mLocalFile);
 				if (!localFile.exists() || !localFile.canRead()) {
+					track[0].mLocalFile = null;
+					Music m = new Music(getActivity());
+					m.add(track[0]);
 					return null;
 				}
 			} else {
 				try {
+					publishProgress(1);
 					localFile = Network.downloadFile(getActivity(), track[0].mRemoteFile);
 					if (localFile == null) {
+						return null;
+					}
+					if (isCancelled()) {
 						return null;
 					}
 					
 					// Move cached file to SD storage space
 					StorageHelper sHelper = new StorageHelper(getActivity());
-					File newLocalFile = new File(getActivity().getExternalFilesDir(null), localFile.getName());
+					File newLocalFile = new File(sHelper.mMusicStorageDir, localFile.getName());
 					sHelper.copyToExternalStorage(localFile, newLocalFile);
 					localFile.delete();
 					localFile = newLocalFile;
@@ -196,6 +210,7 @@ public class MediaPlayerFragment extends Fragment {
 					// Save download record
 					track[0].mLocalFile = localFile.getAbsolutePath();
 					new Music(getActivity()).add(track[0]);
+					publishProgress(2);
 				} catch (IOException e) {
 					Log.e("a", e.getMessage());
 					return null;
@@ -224,7 +239,21 @@ public class MediaPlayerFragment extends Fragment {
 			mIsReady  = true;
 			return null;
 		}
+		
+		protected void onProgressUpdate(Integer... progress) {
+			if (isCancelled()) {
+				return;
+			}
+			if (progress[0] == 1) {
+				mProgressBar.setIndeterminate(true);
+			} else {
+				mProgressBar.setIndeterminate(false);
+			}
+		}
     	
+		protected void onPostExecute(String result) {
+			mPreparing = false;
+		}
     }
 }
 

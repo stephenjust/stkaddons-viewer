@@ -11,7 +11,7 @@ public class MusicDetailActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_addon_detail);
+        setContentView(R.layout.activity_music_detail);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
