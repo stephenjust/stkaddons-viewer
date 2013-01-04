@@ -22,11 +22,18 @@ public class MusicDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        setRetainInstance(true);
         
         if (getArguments().containsKey(ARG_ITEM_ID)) {
         	mMusic = new Music(getActivity());
         	mTrack = mMusic.get(getArguments().getInt(ARG_ITEM_ID));
         }
+        
+        // Prepare fragment
+        Bundle arguments = new Bundle();
+        arguments.putInt(MediaPlayerFragment.ARG_ITEM_ID, mTrack.mId);
+        mPlayerFragment = new MediaPlayerFragment();
+        mPlayerFragment.setArguments(arguments);
     }
 
     @Override
@@ -41,14 +48,10 @@ public class MusicDetailFragment extends Fragment {
         ((TextView) rootView.findViewById(R.id.music_title)).setText(mTrack.mTitle);
         ((TextView) rootView.findViewById(R.id.music_artist)).setText(mTrack.mArtist);
         ((TextView) rootView.findViewById(R.id.music_license)).setText(mTrack.mLicense);
+        ((TextView) rootView.findViewById(R.id.music_size)).setText(StringUtils.sizeString(mTrack.mFileSize));
 
-        // Start player fragment
-        Bundle arguments = new Bundle();
-        arguments.putInt(MediaPlayerFragment.ARG_ITEM_ID, mTrack.mId);
-        mPlayerFragment = new MediaPlayerFragment();
-        mPlayerFragment.setArguments(arguments);
         getChildFragmentManager().beginTransaction()
-                .add(R.id.fragment_player, mPlayerFragment)
+                .replace(R.id.fragment_player, mPlayerFragment)
                 .commit();
         
         return rootView;

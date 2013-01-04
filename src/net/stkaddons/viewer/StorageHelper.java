@@ -17,8 +17,27 @@ public class StorageHelper {
 	boolean mExternalStorageAvailable = false;
 	boolean mExternalStorageWriteable = false;
 	
-	public StorageHelper(Context context) {
+	File mMusicStorageDir;
+	File mTrackStorageDir;
+	File mKartStorageDir;
+	
+	public StorageHelper(Context context) throws IOException {
 		mContext = context;
+		
+		getExternalStorageState();
+		
+		if (!mExternalStorageWriteable) {
+			throw new IOException("External storage is not writeable!");
+		}
+		
+		// Initialise storage directories
+		File extBaseDir = mContext.getExternalFilesDir(null);
+		File mMusicStorageDir = new File(extBaseDir.getAbsolutePath() + "/music");
+		File mTrackStorageDir = new File(extBaseDir.getAbsolutePath() + "/tracks");
+		File mKartStorageDir = new File(extBaseDir.getAbsolutePath() + "/karts");
+		mMusicStorageDir.mkdirs();
+		mTrackStorageDir.mkdirs();
+		mKartStorageDir.mkdirs();
 	}
 	
 	private void getExternalStorageState() {

@@ -3,38 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="2dp"
-    android:orientation="vertical" >
+    android:contentDescription="@string/media_cd_play"
+    android:orientation="horizontal" >
+
+    <ImageButton
+        android:id="@+id/button_play"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:contentDescription="@string/media_cd_play"
+        android:scaleType="fitCenter"
+        android:src="@drawable/media_play" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/button_stream"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button" />
-
-        <ImageButton
-            android:id="@+id/button_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
         <ProgressBar
             android:id="@+id/progress_bar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="18dp" />
+
+        <TextView
+            android:id="@+id/text_kb_streamed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="@string/dummy_text"
+            android:visibility="invisible" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/text_kb_streamed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="@string/dummy_text"
-        android:visibility="invisible" />
 
 </LinearLayout>

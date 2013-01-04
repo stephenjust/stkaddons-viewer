@@ -33,6 +33,12 @@
             android:layout_height="wrap_content"
             android:text="@string/dummy_text" />
 
+        <TextView
+            android:id="@+id/music_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dummy_text" />
+
         <FrameLayout
             android:id="@+id/fragment_player"
             android:layout_width="match_parent"

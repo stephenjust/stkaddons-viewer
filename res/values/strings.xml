@@ -31,6 +31,9 @@
     <string name="title_music_detail">Music Track Detail</string>
     <string name="title_music_list">Music Tracks</string>
     
+    <!-- Media Player -->
+    <string name="media_cd_play">Play Button</string>
+    
     <!-- Credits activity -->
     <string name="title_activity_credits">Credits</string>
 

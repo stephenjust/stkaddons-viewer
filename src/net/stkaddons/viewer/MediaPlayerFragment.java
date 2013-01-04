@@ -37,6 +37,7 @@ public class MediaPlayerFragment extends Fragment {
 	private boolean mIsReady = false;
 	private boolean mPreparing = false;
 	private boolean isPlaying;
+	private int mProgress;
 	private MediaPlayer mPlayer;
     
     public MediaPlayerFragment() {
@@ -46,9 +47,26 @@ public class MediaPlayerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        
         if (getArguments().containsKey(ARG_ITEM_ID)) {
         	mTrackId = getArguments().getInt(ARG_ITEM_ID);
+        }
+        
+        mProgress = 0;
+        
+        // Prepare media player
+        try {
+	        if (mPlayer != null) {
+	        	mPlayer.reset();
+	        } else {
+	        	mPlayer = new MediaPlayer();
+	        }
+	        mPlayer.setOnErrorListener(new MediaErrorListener());
+	        mPlayer.setOnPreparedListener(new MediaPreparedListener());
+	        mPlayer.setOnBufferingUpdateListener(new MediaBufferListener());
+        } catch (IllegalStateException e) {
+        	
+        } catch (IllegalArgumentException e) {
+        	
         }
     }
 
@@ -63,6 +81,7 @@ public class MediaPlayerFragment extends Fragment {
 
 		mPlayButton = (ImageButton) mView.findViewById(R.id.button_play);
 		mProgressBar = (ProgressBar) mView.findViewById(R.id.progress_bar);
+		mProgressBar.setProgress(mProgress);
         
 		mPlayButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
@@ -83,36 +102,44 @@ public class MediaPlayerFragment extends Fragment {
 				}
 				isPlaying = !isPlaying;
         }});
-        
-        // Prepare media player
-        try {
-	        if (mPlayer != null) {
-	        	mPlayer.reset();
-	        } else {
-	        	mPlayer = new MediaPlayer();
-	        }
-	        mPlayer.setOnErrorListener(new MediaErrorListener());
-	        mPlayer.setOnPreparedListener(new MediaPreparedListener());
-	        mPlayer.setOnBufferingUpdateListener(new MediaBufferListener());
-        } catch (IllegalStateException e) {
-        	
-        } catch (IllegalArgumentException e) {
-        	
-        }
         return mView;
     }
     
-    public void startPlayProgressUpdater() {
-    	float progress = ((float)mPlayer.getCurrentPosition()/mPlayer.getDuration());
-    	mProgressBar.setProgress((int)(progress*100));
+    public void onPause() {
+    	super.onPause();
     	
-		if (mPlayer.isPlaying()) {
-			Runnable notification = new Runnable() {
-		        public void run() {
-		        	startPlayProgressUpdater();
-				}
-		    };
-		    handler.postDelayed(notification,500);
+    	if (mPlayer.isPlaying()) {
+    		mPlayer.pause();
+    	}
+    }
+    
+	public void onDestroy() {
+		super.onDestroy();
+		
+    	if (mPlayer.isPlaying()) {
+    		mPlayer.stop();
+    	}
+    	mPlayer.release();
+	}
+    
+    public void startPlayProgressUpdater() {
+    	Runnable notification = new Runnable() {
+	        public void run() {
+	        	startPlayProgressUpdater();
+			}
+	    };
+    	try {
+			if (mPlayer.isPlaying()) {
+				// Update progress bar
+		    	float progress = ((float)mPlayer.getCurrentPosition()/mPlayer.getDuration());
+		    	mProgress = (int)(progress*100);
+		    	mProgressBar.setProgress((int)(progress*100));
+
+			    handler.postDelayed(notification,500);
+	    	}
+    	} catch (IllegalStateException e) {
+    		Log.w("MediaPlayerFragment.startPlayProgressUpdater", "Media player is no longer in a valid state!");
+    		handler.removeCallbacks(notification);
     	}
     }
     
