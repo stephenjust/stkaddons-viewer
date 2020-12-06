@@ -14,8 +14,8 @@
     <string name="menu_music">Music</string>
     
     <!-- XML Files -->
-    <string name="xml_news">http://stkaddons.net/dl/xml/news.xml</string>
-    <string name="xml_assets">http://stkaddons.net/dl/xml/assets2.xml</string>
+    <string name="xml_news">https://online.supertuxkart.net/dl/xml/news.xml</string>
+    <string name="xml_assets">https://online.supertuxkart.net/dl/xml/assets2.xml</string>
 
     <!-- Error Messages -->
     <string name="error_no_network">Please connect to a wi-fi network.</string>
